@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-// This page uses client-side authentication and redirects after submit.
-export const instant = false;
+
 
 export default function LoginPage() {
   const router = useRouter();

@@ -60,50 +60,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    try {
-      const session = localStorage.getItem(SESSION_KEY);
-      if (session) setUser(JSON.parse(session) as AuthUser);
+ useEffect(() => {
+  try {
+    const session = localStorage.getItem(SESSION_KEY);
 
-      const accounts = readAccounts();
-      const demoAccounts: StoredAccount[] = [
-        {
-          id: "demo-super-admin",
-          businessId: "brandbox-demo",
-          businessName: "THE BRAND BOX",
-          name: "Admin",
-          email: "admin@brandbox.demo",
-          phone: "9000000001",
-          password: "Demo@123",
-          role: "super-admin",
-          branchId: null,
-          branchName: null,
-        },
-        {
-          id: "demo-branch-admin",
-          businessId: "brandbox-demo",
-          businessName: "THE BRAND BOX",
-          name: "Branch Admin",
-          email: "branch@brandbox.demo",
-          phone: "9000000002",
-          password: "Demo@123",
-          role: "branch-admin",
-          branchId: "chennai-main",
-          branchName: "Chennai Main Branch",
-        },
-      ];
-      const merged = [...accounts];
-      for (const demo of demoAccounts) {
-        if (!merged.some((item) => item.email.toLowerCase() === demo.email))
-          merged.push(demo);
-      }
-      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(merged));
-    } catch {
-      // Keep signed-out state if browser storage is unavailable.
-    } finally {
-      setLoading(false);
+    if (session) {
+      setUser(JSON.parse(session) as AuthUser);
     }
-  }, []);
+
+    const accounts = readAccounts();
+
+    const demoAccounts: StoredAccount[] = [
+      {
+        id: "demo-super-admin",
+        businessId: "brandbox-demo",
+        businessName: "THE BRAND BOX",
+        name: "Admin",
+        email: "admin@brandbox.demo",
+        phone: "9000000001",
+        password: "Demo@123",
+        role: "super-admin",
+        branchId: null,
+        branchName: null,
+      },
+      {
+        id: "demo-branch-admin",
+        businessId: "brandbox-demo",
+        businessName: "THE BRAND BOX",
+        name: "Branch Admin",
+        email: "branch@brandbox.demo",
+        phone: "9000000002",
+        password: "Demo@123",
+        role: "branch-admin",
+        branchId: "chennai-main",
+        branchName: "Chennai Main Branch",
+      },
+    ];
+
+    const merged = [...accounts];
+
+    for (const demo of demoAccounts) {
+      if (!merged.some((item) => item.email.toLowerCase() === demo.email)) {
+        merged.push(demo);
+      }
+    }
+
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(merged));
+  } catch (error) {
+    console.error("Auth initialization error:", error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
   const register = useCallback(
     (input: {
